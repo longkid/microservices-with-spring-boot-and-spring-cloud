@@ -1,6 +1,7 @@
 package com.in28minutes.rest.webservices.restfulwebservices.user;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +28,6 @@ public class UserController {
     @GetMapping("/users/{id}")
     public User retrieveOneUser(@PathVariable int id) {
         User user = userDaoService.findOne(id);
-        if (user == null) {
-            throw new UserNotFoundException("id: " + id);
-        }
 
         return user;
     }
@@ -37,7 +35,7 @@ public class UserController {
     // input - details of user
     // output - CREATED & return the created URI
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@RequestBody User user) {
+    public ResponseEntity createUser(@RequestBody User user) {
         User savedUser = userDaoService.save(user);
 
         // HttpStatus:  201 Created
@@ -45,5 +43,10 @@ public class UserController {
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(savedUser.getId()).toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id) {
+        userDaoService.delete(id);
     }
 }
