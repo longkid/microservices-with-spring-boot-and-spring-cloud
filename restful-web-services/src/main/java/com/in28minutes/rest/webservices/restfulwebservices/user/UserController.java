@@ -12,6 +12,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 public class UserController {
     private final UserDaoService userDaoService;
@@ -35,7 +37,7 @@ public class UserController {
     // input - details of user
     // output - CREATED & return the created URI
     @PostMapping("/users")
-    public ResponseEntity createUser(@RequestBody User user) {
+    public ResponseEntity createUser(@Valid @RequestBody User user) {
         User savedUser = userDaoService.save(user);
 
         // HttpStatus:  201 Created
