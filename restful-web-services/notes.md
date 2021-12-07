@@ -20,3 +20,4 @@
   curl --location --request GET 'localhost:8080/users' --header 'Accept: application/xml'
   ```
 - Step 20: Open browser at `localhost:8080/swagger-ui.html`
+- Step 22: Open browser at `http://localhost:8080/actuator` to view actuator endpoints
