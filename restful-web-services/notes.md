@@ -13,6 +13,23 @@
 - Create a post for a User          - POST /users/{id}/posts
 - Retrieve details of a post        - GET /users/{id}/posts/{post_id}
 
+### API Versioning
+- Media type versioning (a.k.a "content negotiation" or "Accept" header)
+  - GitHub
+- (Custom) headers versioning
+  - Microsoft
+- URI versioning
+  - Twitter
+- Request Parameter versioning
+  - Amazon
+
+**No Perfect Solution! Things to consider:**
+- URI Pollution (URI versioning cons.)
+- Misuse of HTTP Headers (header versioning cons.)
+- Caching (header versioning cons.)
+- Can we execute the request on the browser? (header versioning cons.)
+- API documentation
+
 ### How to test
 
 - Step 19:
@@ -21,3 +38,25 @@
   ```
 - Step 20: Open browser at `localhost:8080/swagger-ui.html`
 - Step 22: Open browser at `http://localhost:8080/actuator` to view actuator endpoints
+- Step 27:
+  - URI versioning
+  ```
+  curl --location --request GET 'localhost:8080/person/v1'
+  curl --location --request GET 'localhost:8080/person/v2'
+  ```
+  - Request param versioning
+  ```
+  curl --location --request GET 'localhost:8080/person/param?version=1'
+  curl --location --request GET 'localhost:8080/person/param?version=2'
+  ```
+  - (Custom) header versioning
+  ```
+  curl --location --request GET 'localhost:8080/person/header' --header 'X-API-VERSION: 1'
+  curl --location --request GET 'localhost:8080/person/header' --header 'X-API-VERSION: 2'
+  ```
+  - Media type versioning
+  ```
+  curl --location --request GET 'localhost:8080/person/produce' --header 'Accept: application/vnd.company.app-v1+json'
+  curl --location --request GET 'localhost:8080/person/produce' --header 'Accept: application/vnd.company.app-v2+json'
+  ```
+  
