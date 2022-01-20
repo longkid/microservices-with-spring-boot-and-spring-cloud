@@ -55,7 +55,7 @@ public class UserJpaController {
     // output - CREATED & return the created URI
     @PostMapping("/users")
     public ResponseEntity createUser(@Valid @RequestBody User user) {
-        User savedUser = userDaoService.save(user);
+        User savedUser = userRepository.save(user);
 
         // HttpStatus:  201 Created
         // Return location of resource in 'Location' response header (Ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location)
@@ -66,6 +66,6 @@ public class UserJpaController {
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable int id) {
-        userDaoService.delete(id);
+        userRepository.deleteById(id);
     }
 }
