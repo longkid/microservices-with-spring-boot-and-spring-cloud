@@ -1,5 +1,6 @@
 package com.in28minutes.rest.webservices.restfulwebservices.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.in28minutes.rest.webservices.restfulwebservices.user.User;
 
 import javax.persistence.Entity;
@@ -16,7 +17,12 @@ public class Post {
 
     private String description;
 
+    /**
+     * Use @JsonIgnore on this field to fix issue which causes recursion, i.e.
+     * a post contains a user info, a user contains a list of posts and so on.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 
     public Integer getId() {

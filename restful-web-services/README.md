@@ -59,4 +59,4 @@
   curl --location --request GET 'localhost:8080/person/produce' --header 'Accept: application/vnd.company.app-v1+json'
   curl --location --request GET 'localhost:8080/person/produce' --header 'Accept: application/vnd.company.app-v2+json'
   ```
-  
+- Step 29: Open h2 console at http://localhost:8080/h2-console
