@@ -1,6 +1,7 @@
 package com.in28minutes.rest.webservices.restfulwebservices.user;
 
 import com.in28minutes.rest.webservices.restfulwebservices.post.Post;
+import com.in28minutes.rest.webservices.restfulwebservices.post.PostRepository;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -26,12 +27,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/jpa")
 public class UserJpaController {
-    private UserDaoService userDaoService;
     private UserRepository userRepository;
+    private PostRepository postRepository;
 
-    public UserJpaController(UserDaoService userDaoService, UserRepository userRepository) {
-        this.userDaoService = userDaoService;
+    public UserJpaController(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     @GetMapping("/users")
@@ -43,7 +44,7 @@ public class UserJpaController {
     public EntityModel<User> retrieveOneUser(@PathVariable int id) {
         Optional<User> userOpt = userRepository.findById(id);
         if (!userOpt.isPresent()) {
-            throw new UserNotFoundException("id: " + id);
+            throw new NotFoundException("id: " + id);
         }
 
         EntityModel<User> entityModel = EntityModel.of(userOpt.get());
@@ -70,10 +71,40 @@ public class UserJpaController {
     public List<Post> retrieveAllPostsOfUser(@PathVariable int id) {
         Optional<User> userOpt = userRepository.findById(id);
         if (!userOpt.isPresent()) {
-            throw new UserNotFoundException("id: " + id);
+            throw new NotFoundException("id: " + id);
         }
 
         return userOpt.get().getPosts();
+    }
+
+    @GetMapping("/users/{id}/posts/{postId}")
+    public Post retrievePostOfUser(@PathVariable int id, @PathVariable int postId) {
+        Optional<Post> postOpt = postRepository.findById(postId);
+        if (!postOpt.isPresent()) {
+            throw new NotFoundException("id: " + postId);
+        }
+        Post post = postOpt.get();
+        if (post.getUser().getId() != id) {
+            throw new MismatchException(String.format("userId %s and postId %s are mismatched", id, postId));
+        }
+
+        return post;
+    }
+
+    @PostMapping("/users/{id}/posts")
+    public ResponseEntity createPostOfUser(@PathVariable int id, @RequestBody Post post) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (!userOpt.isPresent()) {
+            throw new NotFoundException("id: " + id);
+        }
+
+        User user = userOpt.get();
+        post.setUser(user);
+        postRepository.save(post);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(post.getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping("/users/{id}")

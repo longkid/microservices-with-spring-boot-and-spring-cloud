@@ -36,7 +36,7 @@ public class UserDaoService {
                 return user;
             }
         }
-        throw new UserNotFoundException("id: " + id);
+        throw new NotFoundException("id: " + id);
     }
 
     public void delete(int id) {
@@ -48,6 +48,6 @@ public class UserDaoService {
                 return;
             }
         }
-        throw new UserNotFoundException("id: " + id);
+        throw new NotFoundException("id: " + id);
     }
 }
