@@ -12,11 +12,17 @@ import java.math.BigDecimal;
 public class CurrencyExchangeController {
 
     @Autowired
+    private CurrencyExchangeRepository repository;
+
+    @Autowired
     private Environment environment;
 
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     public CurrencyExchange retrieveCurrencyExchange(@PathVariable String from, @PathVariable String to) {
-        CurrencyExchange currencyExchange = new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
+        CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
+        if (currencyExchange == null) {
+            throw new RuntimeException("Cannot find data for " + from + " to " + to);
+        }
         String port = environment.getProperty("local.server.port");
         currencyExchange.setEnvironment(port);
 
