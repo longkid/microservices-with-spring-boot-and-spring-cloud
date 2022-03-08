@@ -14,10 +14,20 @@ public class CircuitBreakerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CircuitBreakerController.class);
 
     @GetMapping("/sample-api")
-    @Retry(name = "default")
+    @Retry(name = "sample-api", fallbackMethod = "hardcodedResponse")
     public String sampleApi() {
         LOGGER.info("Sample API call received");
         ResponseEntity<String> responseEntity = new RestTemplate().getForEntity("http://localhost:8080/some-dummy-url", String.class);
         return responseEntity.getBody();
+    }
+
+    /**
+     * After few failed calls to url http://localhost:8080/some-dummy-url, this method will be called to return response
+     * @param ex
+     * @return
+     */
+    public String hardcodedResponse(Exception ex) {
+        LOGGER.error("Fail to call http://localhost:8080/some-dummy-url: {}", ex.getMessage());
+        return "Fallback Response";
     }
 }
