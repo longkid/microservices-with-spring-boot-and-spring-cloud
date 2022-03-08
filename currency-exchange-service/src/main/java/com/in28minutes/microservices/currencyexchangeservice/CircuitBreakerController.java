@@ -5,14 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 
 @RestController
 public class CircuitBreakerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CircuitBreakerController.class);
 
     @GetMapping("/sample-api")
-    @RateLimiter(name = "default")
+    @Bulkhead(name = "default")
     public String sampleApi() {
         LOGGER.info("Sample API call received");
         return "sample-api";
